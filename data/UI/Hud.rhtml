@@ -4,36 +4,53 @@
     <link type="text/rcss" href="engine:/data/ui/rml.rcss"/>
     <link type="text/rcss" href="app:/data/UI/Hud.rcss"/>
 </head>
-<body data-model="hud">
-    <div id="brand" class="panel">
+<body data-model="hud" data-class-touch="touch" data-class-menu-open="menuOpen || helpOpen">
+    <div id="brand" class="panel" data-class-behind="hasStation || driving">
         <div id="brand-title">PHYSICS PLAYGROUND</div>
-        <div id="brand-sub">An Unravel Engine sample. Walk up to an exhibit, or press Tab for the station menu.</div>
+        <div class="brand-sub" data-if="!touch">An Unravel Engine sample. Walk up to an exhibit, or press Tab for the station menu.</div>
+        <div class="brand-sub" data-if="touch">An Unravel Engine sample. Walk up to an exhibit, or tap Stations to go to one.</div>
     </div>
 
     <div id="gravity" class="panel" data-if="gravityText != ''">{{ gravityText }}</div>
+
+    <div id="touch-bar" data-if="touch &amp;&amp; !menuOpen &amp;&amp; !helpOpen">
+        <div class="touch-button" data-if="hasStation &amp;&amp; !driving" data-event-click="ResetStation()">Reset</div>
+        <div class="touch-button" data-if="!driving" data-event-click="ToggleMenu()">Stations</div>
+        <div class="touch-button" data-event-click="ToggleHelp()">Help</div>
+    </div>
 
     <div id="crosshair" data-if="!driving &amp;&amp; !menuOpen" data-attr-class="'aim-' + aimKind">
         <div id="crosshair-dot"></div>
         <div id="aim-text" data-if="aimText != ''">{{ aimText }}</div>
     </div>
 
-    <div id="station" class="panel" data-if="hasStation &amp;&amp; !driving">
+    <div id="station" class="panel" data-if="hasStation &amp;&amp; !driving" data-class-folded="cardFolded"
+         data-event-click="ToggleCard()">
         <div id="station-title">{{ title }}</div>
         <div id="station-description">{{ description }}</div>
         <div id="station-controls">{{ controls }}</div>
-        <div id="station-reset"><span class="key">R</span>puts this station back as it started.</div>
+        <div id="station-more" data-if="touch &amp;&amp; cardFolded">Tap for what to try here.</div>
+        <div id="station-reset" data-if="!touch"><span class="key">R</span>puts this station back as it started.</div>
     </div>
 
     <div id="driving" class="panel" data-if="driving">
         <div class="caption">DRIVING THE BUGGY</div>
-        <div class="row"><span class="key">W S</span>drive forward and back</div>
-        <div class="row"><span class="key">A D</span>steer the front wheels</div>
-        <div class="row"><span class="key">Space</span>brake</div>
-        <div class="row"><span class="key">F</span>put it back on its wheels</div>
-        <div class="row"><span class="key">E</span>get out</div>
+        <div data-if="!touch">
+            <div class="row"><span class="key">W S</span>drive forward and back</div>
+            <div class="row"><span class="key">A D</span>steer the front wheels</div>
+            <div class="row"><span class="key">Space</span>brake</div>
+            <div class="row"><span class="key">F</span>put it back on its wheels</div>
+            <div class="row"><span class="key">E</span>get out</div>
+        </div>
+        <div data-if="touch">
+            <div class="row"><span class="key">Stick</span>up and down drives, sideways steers</div>
+            <div class="row"><span class="key">Brake</span>stop the wheels</div>
+            <div class="row"><span class="key">Flip</span>put it back on its wheels</div>
+            <div class="row"><span class="key">Exit</span>get out</div>
+        </div>
     </div>
 
-    <div id="hints" class="panel" data-if="!menuOpen &amp;&amp; !helpOpen">
+    <div id="hints" class="panel" data-if="!touch &amp;&amp; !menuOpen &amp;&amp; !helpOpen">
         <span class="key">F1</span>controls
         <span class="key gap">Tab</span>stations
         <span class="hint" data-if="cursorFree">Click in the view to look around again.</span>
@@ -41,24 +58,37 @@
 
     <div id="help" class="panel modal" data-if="helpOpen">
         <div class="caption">CONTROLS</div>
-        <div class="row"><span class="key">W A S D</span>walk, <span class="key inline">Shift</span>to run, <span class="key inline">Space</span>to jump</div>
-        <div class="row"><span class="key">Mouse</span>look around</div>
-        <div class="row"><span class="key">Left click</span>push what the crosshair is on, or press a button</div>
-        <div class="row"><span class="key">Right click</span>hold to carry a body; left click throws it, the wheel moves it</div>
-        <div class="row"><span class="key">E</span>press the button or barrel in front of you, get in the buggy</div>
-        <div class="row"><span class="key">R</span>reset the station you are at</div>
-        <div class="row"><span class="key">1 - 6</span>go to a station</div>
-        <div class="row"><span class="key">Esc</span>free the cursor to click the menus</div>
+        <div data-if="!touch">
+            <div class="row"><span class="key">W A S D</span>walk, <span class="key inline">Shift</span>to run, <span class="key inline">Space</span>to jump</div>
+            <div class="row"><span class="key">Mouse</span>look around</div>
+            <div class="row"><span class="key">Left click</span>push what the crosshair is on, or press a button</div>
+            <div class="row"><span class="key">Right click</span>hold to carry a body; left click throws it, the wheel moves it</div>
+            <div class="row"><span class="key">E</span>press the button or barrel in front of you, get in the buggy</div>
+            <div class="row"><span class="key">R</span>reset the station you are at</div>
+            <div class="row"><span class="key">1 - 6</span>go to a station</div>
+            <div class="row"><span class="key">Esc</span>free the cursor to click the menus</div>
+        </div>
+        <div data-if="touch">
+            <div class="row"><span class="key">Stick</span>walk where your left thumb lands; push it all the way to run</div>
+            <div class="row"><span class="key">Drag</span>look around: drag anywhere else on the screen</div>
+            <div class="row"><span class="key">Push</span>push what the crosshair is on, or press a button</div>
+            <div class="row"><span class="key">Grab</span>pick up what the crosshair is on; Throw sends it off, Drop puts it down</div>
+            <div class="row"><span class="key">Use</span>press the button or barrel in front of you, get in the buggy</div>
+            <div class="row"><span class="key">Jump</span>jump</div>
+            <div class="row"><span class="key">Stations</span>go to a station; Reset puts the one you are at back</div>
+        </div>
         <div class="close nav" data-event-click="Close()">Close</div>
     </div>
 
     <div id="menu" class="panel modal" data-if="menuOpen">
         <div class="caption">STATIONS</div>
-        <div class="station-row nav" data-for="s : stations" data-class-current="s.current" data-event-click="GoTo(s.index)">
-            <div class="station-number">{{ s.index + 1 }}</div>
-            <div class="station-text">
-                <div class="station-name">{{ s.title }}</div>
-                <div class="station-summary">{{ s.summary }}</div>
+        <div class="station-list">
+            <div class="station-row nav" data-for="s : stations" data-class-current="s.current" data-event-click="GoTo(s.index)">
+                <div class="station-number">{{ s.index + 1 }}</div>
+                <div class="station-text">
+                    <div class="station-name">{{ s.title }}</div>
+                    <div class="station-summary">{{ s.summary }}</div>
+                </div>
             </div>
         </div>
         <div class="menu-buttons">

@@ -26,6 +26,28 @@ the startup scene of a deployed build.
 
 The crosshair tells what a click would do: the mass of a body, "too heavy to carry", a button's action.
 
+A gamepad plays too: the left stick walks, the right stick looks, the right trigger runs, A jumps, B pushes (and
+throws what you carry), Y grabs and puts down, X uses.
+
+### On a phone or tablet
+
+A touch screen gets the engine's on-screen controls (`SampleTouchJoystick`), and the HUD answers to it:
+
+| Touch | What it does |
+|-------|--------------|
+| Stick, left side | Walk where your left thumb lands; push it all the way to run |
+| Drag anywhere else | Look around |
+| Push | Push what the crosshair is on, or press a button; while carrying it reads Throw |
+| Grab | Pick up what the crosshair is on; while carrying it reads Drop and puts the body down |
+| Use | Press the button or barrel in front of you, get in the buggy |
+| Jump | Jump |
+| Stations, Help, Reset | Open the station menu or the controls, put the station back |
+
+The buttons say what they do at the moment: in the buggy they read Brake, Exit and Flip, and the stick drives
+and steers. The station card moves to the top, out of the controls' way, folds to its title after a few seconds
+and opens again on a tap. The layout is in `dp` with media queries for a phone held sideways or upright, so the
+Game panel's phone and tablet presets show what a device shows.
+
 ## The stations
 
 ### 1. Ragdoll Lab

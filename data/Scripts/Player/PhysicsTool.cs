@@ -13,6 +13,8 @@ namespace PhysicsSample
     /// <item>While carrying, left click throws; the mouse wheel moves the body nearer or further.</item>
     /// <item>A click or E on a button, a barrel or the buggy presses its <see cref="Interactable"/> instead.</item>
     /// </list>
+    /// The input actions "Push" and "Grab" (a gamepad's B and Y, and the on-screen buttons of a touch screen) do the
+    /// same: Push pushes or throws, Grab picks a body up and, pressed again, puts it down.
     /// </summary>
     public class PhysicsTool : ScriptComponent
     {
@@ -63,6 +65,8 @@ namespace PhysicsSample
         private float carryGap;
         private AudioSourceComponent audioSource;
         private FirstPersonController walker;
+        /// <summary>The right mouse button holds the body: letting go of it drops it. Grab carries until pressed again.</summary>
+        private bool isHeldByMouse;
 
         /// <summary>What the crosshair is on, if anything within range.</summary>
         public RaycastHit? aim { get; private set; }
@@ -99,7 +103,7 @@ namespace PhysicsSample
                 }
                 return;
             }
-            if (Cursor.lockState != CursorLockMode.Locked)
+            if (walker != null ? !walker.hasControl : Cursor.lockState != CursorLockMode.Locked)
             {
                 return;
             }
@@ -109,27 +113,36 @@ namespace PhysicsSample
                 Play(pushSound, 0.4f);
                 return;
             }
+            // The mouse works the tool only while it looks around: on a touch screen a press is a finger, not a click.
+            bool usesMouse = Cursor.lockState == CursorLockMode.Locked;
+            bool pushes = (usesMouse && Input.IsPressed(MouseButton.Left)) || Input.IsPressed("Push");
             float wheel = Input.GetAxis("Mouse ScrollWheel");
             holdDistance = Mathf.Clamp(holdDistance + wheel * 0.5f, holdRange.x, holdRange.y);
             if (carried)
             {
-                if (Input.IsPressed(MouseButton.Left))
+                if (pushes)
                 {
                     Throw();
                 }
-                else if (Input.IsReleased(MouseButton.Right))
+                else if (isHeldByMouse ? Input.IsReleased(MouseButton.Right) : Input.IsPressed("Grab"))
                 {
                     Drop(true);
                 }
                 return;
             }
-            if (Input.IsPressed(MouseButton.Left))
+            if (pushes)
             {
                 Push();
             }
-            else if (Input.IsPressed(MouseButton.Right))
+            else if (usesMouse && Input.IsPressed(MouseButton.Right))
             {
                 Grab();
+                isHeldByMouse = true;
+            }
+            else if (Input.IsPressed("Grab"))
+            {
+                Grab();
+                isHeldByMouse = false;
             }
         }
 

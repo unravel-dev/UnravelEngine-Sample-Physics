@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unravel.Core;
+using Unravel.Samples;
 
 namespace PhysicsSample
 {
@@ -13,6 +14,8 @@ namespace PhysicsSample
         public string description = "";
         public string controls = "";
         public bool hasStation;
+        /// <summary>The station card shows its title alone: on a touch screen it folds a while after it opens.</summary>
+        public bool cardFolded;
         /// <summary>What the crosshair is on: "", "body", "heavy", "ragdoll", "use" or "carry".</summary>
         public string aimKind = "";
         public string aimText = "";
@@ -20,12 +23,17 @@ namespace PhysicsSample
         public bool menuOpen;
         public bool cursorFree;
         public bool driving;
+        /// <summary>A touch screen: the texts name the on-screen buttons, and the menus open from buttons of their own.</summary>
+        public bool touch;
         public List<StationRow> stations = new List<StationRow>();
         public string gravityText = "";
 
         internal System.Action<int> goTo;
         internal System.Action reset;
         internal System.Action closeAll;
+        internal System.Action toggleMenu;
+        internal System.Action toggleHelp;
+        internal System.Action toggleCard;
 
         public void GoTo(int index)
         {
@@ -41,6 +49,21 @@ namespace PhysicsSample
         {
             closeAll?.Invoke();
         }
+
+        public void ToggleMenu()
+        {
+            toggleMenu?.Invoke();
+        }
+
+        public void ToggleHelp()
+        {
+            toggleHelp?.Invoke();
+        }
+
+        public void ToggleCard()
+        {
+            toggleCard?.Invoke();
+        }
     }
 
     /// <summary>A row of the station menu.</summary>
@@ -55,6 +78,8 @@ namespace PhysicsSample
     /// <summary>
     /// Drives the HUD: the crosshair says what the physics tool would do, the card at the bottom left describes the
     /// station the visitor stands at, Tab opens the station menu (teleports), F1 the controls, R resets the station.
+    /// On a touch screen buttons at the top open the menus, the card moves to the top, and the on-screen buttons are
+    /// named for what they do at the moment: Push throws while the tool carries, and the buggy brakes with Jump.
     /// </summary>
     public class Hud : ScriptComponent
     {
@@ -67,6 +92,13 @@ namespace PhysicsSample
         [Tooltip("The camera with the PhysicsTool.")]
         public Entity tool;
 
+        [Tooltip("The entity with the on-screen controls (SampleTouchJoystick).")]
+        public Entity touchControls;
+
+        [Tooltip("Seconds the station card shows in full on a touch screen before it folds to its title; a tap on it " +
+                 "opens it again.")]
+        public float cardSeconds = 8.0f;
+
         public AudioClip clickSound;
 
         /// <summary>Whether a panel takes the mouse, so a click there does not lock the cursor.</summary>
@@ -78,12 +110,15 @@ namespace PhysicsSample
         private Station current;
         private FirstPersonController walker;
         private PhysicsTool physicsTool;
+        private SampleTouchJoystick touchJoystick;
+        private float cardOpenedAt;
         private string lastAim = "";
 
         public override void OnStart()
         {
             walker = player.GetComponent<FirstPersonController>();
             physicsTool = tool.GetComponent<PhysicsTool>();
+            touchJoystick = touchControls ? touchControls.GetComponent<SampleTouchJoystick>() : null;
             stations = Station.All();
             for (int i = 0; i < stations.Count; ++i)
             {
@@ -92,15 +127,21 @@ namespace PhysicsSample
             hud.goTo = GoTo;
             hud.reset = ResetCurrent;
             hud.closeAll = CloseAll;
+            hud.toggleMenu = ToggleMenu;
+            hud.toggleHelp = ToggleHelp;
+            hud.toggleCard = ToggleCard;
             model = document.GetComponent<UIDocumentComponent>().GetModel("hud");
             model.Bind(hud);
         }
 
         public override void OnUpdate()
         {
+            UpdateInputKind();
             UpdateKeys();
             UpdateStation();
+            UpdateCard();
             UpdateAim();
+            UpdateTouchControls();
             hud.cursorFree = Cursor.lockState != CursorLockMode.Locked;
             isPointerOverPanel = hud.menuOpen || hud.helpOpen;
             model.Dirty("cursorFree");
@@ -118,23 +159,28 @@ namespace PhysicsSample
             model.Dirty("driving");
         }
 
+        /// <summary>A touch screen can turn up while playing (a touch laptop's first finger): the texts follow it.</summary>
+        private void UpdateInputKind()
+        {
+            if (hud.touch == Input.touchSupported)
+            {
+                return;
+            }
+            hud.touch = Input.touchSupported;
+            ShowStation(current);
+            lastAim = null;
+            model.DirtyAll();
+        }
+
         private void UpdateKeys()
         {
             if (Input.IsPressed(KeyCode.F1))
             {
-                hud.helpOpen = !hud.helpOpen;
-                hud.menuOpen = false;
-                SetCursorFree(hud.helpOpen);
-                model.Dirty("helpOpen");
-                model.Dirty("menuOpen");
+                ToggleHelp();
             }
             if (Input.IsPressed(KeyCode.Tab))
             {
-                hud.menuOpen = !hud.menuOpen;
-                hud.helpOpen = false;
-                SetCursorFree(hud.menuOpen);
-                model.Dirty("helpOpen");
-                model.Dirty("menuOpen");
+                ToggleMenu();
             }
             if (Input.IsPressed(KeyCode.R) && current != null && !hud.driving)
             {
@@ -149,8 +195,31 @@ namespace PhysicsSample
             }
         }
 
+        private void ToggleHelp()
+        {
+            hud.helpOpen = !hud.helpOpen;
+            hud.menuOpen = false;
+            SetCursorFree(hud.helpOpen);
+            model.Dirty("helpOpen");
+            model.Dirty("menuOpen");
+        }
+
+        private void ToggleMenu()
+        {
+            hud.menuOpen = !hud.menuOpen;
+            hud.helpOpen = false;
+            SetCursorFree(hud.menuOpen);
+            model.Dirty("helpOpen");
+            model.Dirty("menuOpen");
+        }
+
+        /// <summary>Frees the cursor for a menu and locks it to the view again; a touch screen has no cursor to hold.</summary>
         private static void SetCursorFree(bool free)
         {
+            if (Input.touchSupported)
+            {
+                return;
+            }
             Cursor.lockState = free ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = free;
         }
@@ -169,15 +238,25 @@ namespace PhysicsSample
                     nearest = station;
                 }
             }
-            if (nearest == current)
+            if (nearest != current)
             {
-                return;
+                ShowStation(nearest);
             }
-            current = nearest;
+        }
+
+        private void ShowStation(Station station)
+        {
+            current = station;
             hud.hasStation = current != null;
+            hud.cardFolded = false;
+            cardOpenedAt = Time.time;
             hud.title = current != null ? current.title : "";
             hud.description = current != null ? current.description : "";
-            hud.controls = current != null ? current.controls : "";
+            hud.controls = "";
+            if (current != null)
+            {
+                hud.controls = hud.touch && !string.IsNullOrEmpty(current.touchControls) ? current.touchControls : current.controls;
+            }
             for (int i = 0; i < hud.stations.Count; ++i)
             {
                 hud.stations[i].current = stations[i] == current;
@@ -192,7 +271,7 @@ namespace PhysicsSample
             if (physicsTool.carriedBody)
             {
                 kind = "carry";
-                text = "Click to throw, release to drop, wheel to move it";
+                text = hud.touch ? "Throw it, or drop it here" : "Click to throw, release to drop, wheel to move it";
             }
             else if (physicsTool.aim.HasValue)
             {
@@ -202,19 +281,20 @@ namespace PhysicsSample
                 if (interactable != null)
                 {
                     kind = "use";
-                    text = interactable.prompt;
+                    text = interactable.prompt + (hud.touch ? " - press Use" : " - click or press E");
                 }
                 else if (RagdollCharacter.Find(hit.entity) != null)
                 {
                     kind = "ragdoll";
-                    text = "Click to push";
+                    text = hud.touch ? "Push to shove it" : "Click to push";
                 }
                 else if (body != null && body.bodyType == RigidbodyType.Dynamic)
                 {
                     bool heavy = body.mass > physicsTool.maxCarryMass;
                     kind = heavy ? "heavy" : "body";
+                    string how = hud.touch ? "push it, or grab it to carry" : "click to push, hold right to carry";
                     text = heavy ? string.Format("{0:0} kg - too heavy to carry", body.mass)
-                                 : string.Format("{0:0.#} kg - click to push, hold right to carry", body.mass);
+                                 : string.Format("{0:0.#} kg - {1}", body.mass, how);
                 }
             }
             string key = kind + text;
@@ -227,6 +307,58 @@ namespace PhysicsSample
             hud.aimText = text;
             model.Dirty("aimKind");
             model.Dirty("aimText");
+        }
+
+        /// <summary>On a touch screen the card leaves the view to the game once it has been read.</summary>
+        private void UpdateCard()
+        {
+            if (hud.touch && hud.hasStation && !hud.cardFolded && Time.time - cardOpenedAt > cardSeconds)
+            {
+                hud.cardFolded = true;
+                model.Dirty("cardFolded");
+            }
+        }
+
+        private void ToggleCard()
+        {
+            hud.cardFolded = !hud.cardFolded;
+            cardOpenedAt = Time.time;
+            model.Dirty("cardFolded");
+        }
+
+        /// <summary>Names the on-screen buttons for what they do now, and hides the controls behind a menu.</summary>
+        private void UpdateTouchControls()
+        {
+            if (touchJoystick == null)
+            {
+                return;
+            }
+            bool isMenuOpen = hud.menuOpen || hud.helpOpen;
+            if (touchControls.activeLocal == isMenuOpen)
+            {
+                touchControls.SetActive(!isMenuOpen);
+            }
+            if (hud.driving)
+            {
+                SetButtons("Brake", "", "Exit", "Flip");
+            }
+            else if (physicsTool.carriedBody)
+            {
+                SetButtons("Jump", "Throw", "Use", "Drop");
+            }
+            else
+            {
+                SetButtons("Jump", "Push", "Use", "Grab");
+            }
+        }
+
+        /// <summary>The bottom, right, left and top buttons: the actions Jump, Push, Use and Grab (Flip in the buggy).</summary>
+        private void SetButtons(string south, string east, string west, string north)
+        {
+            touchJoystick.SouthLabel = south;
+            touchJoystick.EastLabel = east;
+            touchJoystick.WestLabel = west;
+            touchJoystick.NorthLabel = north;
         }
 
         private void GoTo(int index)

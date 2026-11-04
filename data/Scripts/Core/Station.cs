@@ -21,6 +21,9 @@ namespace PhysicsSample
         [Tooltip("How to try it, shown under the description.")]
         public string controls = "";
 
+        [Tooltip("How to try it on a touch screen, when that differs from the controls; empty shows the controls.")]
+        public string touchControls = "";
+
         [Tooltip("Where the station menu puts the visitor; their facing is this entity's yaw.")]
         public Entity viewpoint;
 

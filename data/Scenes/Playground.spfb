@@ -1932,7 +1932,9 @@
          },
          "mouseSensitivity": 0.019999999552965165,
          "stickTurnSpeed": 140.0,
-         "pitchLimit": 85.0
+         "pitchLimit": 85.0,
+         "touchLookSpeed": 220.0,
+         "touchRunTilt": 0.8999999761581421
         }
        ]
       }
@@ -1998,11 +2000,11 @@
          "y": 0
         },
         "viewport_size": {
-         "width": 1652,
-         "height": 831
+         "width": 1600,
+         "height": 720
         },
         "orthographic_size": 5.0,
-        "aspect_ratio": 1.9879662990570069,
+        "aspect_ratio": 2.222222328186035,
         "aspect_locked": false,
         "frustum_locked": false
        },
@@ -2153,6 +2155,10 @@
          "tool": {
           "flags": 2,
           "uid": "1edfcfb5-1466-cf4f-8c35-883c04d4a175"
+         },
+         "touchControls": {
+          "flags": 2,
+          "uid": "7bb61dec-4a63-a44d-8481-170cd2a9809b"
          },
          "clickSound": {
           "uid": "c889cf04-c38e-d64e-9ebd-c9afa70c47ab"
@@ -2368,7 +2374,8 @@
          "order": 0,
          "title": "Ragdoll Lab",
          "description": "Mannequins with ragdolls built from their skeletons. A light hit staggers the limb it lands on; a hard one knocks them down, and they get up again on their own.",
-         "controls": "Click a mannequin to push it. Press the buttons to drop one down the stairs or fire the catapult.",
+         "controls": "Push a mannequin to stagger it or knock it down. Press the buttons to drop one down the stairs or fire the catapult.",
+         "touchControls": "",
          "viewpoint": {
           "flags": 2,
           "uid": "0525af9b-71ed-cc4a-9663-054a46b6903a"
@@ -32075,6 +32082,7 @@
          "title": "Joint Workshop",
          "description": "Joints tie bodies together: hinges, sliders, ball joints, ropes and welds, with limits, springs, motors, friction and break forces.",
          "controls": "Push the doors and the bag, cross the bridge, and press the buttons to run the lift, the windmill, the wrecking ball, the cradle and the weight.",
+         "touchControls": "",
          "viewpoint": {
           "flags": 2,
           "uid": "e0e3c4d9-89ba-ab4f-9d79-975dd12a17b4"
@@ -54406,6 +54414,7 @@
          "title": "Materials and Stacking",
          "description": "Physics materials set how bodies grip and bounce, and how far a ball rolls. Stacks show how steady resting contacts are.",
          "controls": "Press the buttons to start the ramps, the balls and the dominoes. Push or pull blocks out of the tower and the pyramid.",
+         "touchControls": "",
          "viewpoint": {
           "flags": 2,
           "uid": "e68b0965-8f1f-bd41-961a-60a1456afc81"
@@ -81494,7 +81503,8 @@
          "order": 3,
          "title": "Forces and Fields",
          "description": "Sensors that push what is inside them: wind, anti-gravity, water and a magnet. Conveyor belts move their surfaces, barrels explode, and a lever changes gravity for the whole world.",
-         "controls": "Push things into the fields, click a barrel to set it off, and press the lever to change gravity.",
+         "controls": "Push things into the fields, push a barrel to set it off, and press the lever to change gravity.",
+         "touchControls": "",
          "viewpoint": {
           "flags": 2,
           "uid": "788cd0e6-8a9c-334c-b7e0-8786b37a6b6d"
@@ -92440,7 +92450,7 @@
         {
          "type": "PhysicsSample.Interactable",
          "@slot": "32a4031f-ed94-be42-99dc-bd19cdfae94f",
-         "prompt": "Click to set the barrel off",
+         "prompt": "Set the barrel off",
          "cooldown": 1.0,
          "pressSound": {
           "uid": "nil"
@@ -92630,7 +92640,7 @@
         {
          "type": "PhysicsSample.Interactable",
          "@slot": "3b20922a-3cfb-7946-b7db-46e6c6ef2447",
-         "prompt": "Click to set the barrel off",
+         "prompt": "Set the barrel off",
          "cooldown": 1.0,
          "pressSound": {
           "uid": "nil"
@@ -92820,7 +92830,7 @@
         {
          "type": "PhysicsSample.Interactable",
          "@slot": "f5002951-a239-654d-8dc6-72d27d20714c",
-         "prompt": "Click to set the barrel off",
+         "prompt": "Set the barrel off",
          "cooldown": 1.0,
          "pressSound": {
           "uid": "nil"
@@ -93010,7 +93020,7 @@
         {
          "type": "PhysicsSample.Interactable",
          "@slot": "d437efb8-dfef-a24b-b24d-d0117b26f2d3",
-         "prompt": "Click to set the barrel off",
+         "prompt": "Set the barrel off",
          "cooldown": 1.0,
          "pressSound": {
           "uid": "nil"
@@ -93200,7 +93210,7 @@
         {
          "type": "PhysicsSample.Interactable",
          "@slot": "f331f08b-3ee2-8245-ac10-35eea99d8fb7",
-         "prompt": "Click to set the barrel off",
+         "prompt": "Set the barrel off",
          "cooldown": 1.0,
          "pressSound": {
           "uid": "nil"
@@ -101734,6 +101744,7 @@
          "title": "Vehicle Bay",
          "description": "A buggy built from a chassis and four wheel joints: motors drive the wheels, springs carry the chassis, and the front wheels steer.",
          "controls": "Press E at the buggy to drive: W and S drive, A and D steer, Space brakes, F rights it, E gets out.",
+         "touchControls": "Press Use at the buggy to drive: the stick drives and steers, Brake stops, Flip rights it, Exit gets out.",
          "viewpoint": {
           "flags": 2,
           "uid": "d3bd0469-0507-8e46-83b2-d22bd00ffcb2"
@@ -109363,7 +109374,7 @@
         {
          "type": "PhysicsSample.Interactable",
          "@slot": "036f0937-6caf-a743-81c0-14a39669c053",
-         "prompt": "Press E to drive the buggy",
+         "prompt": "Drive the buggy",
          "cooldown": 0.5,
          "pressSound": {
           "uid": "nil"
@@ -112716,6 +112727,7 @@
          "title": "Queries",
          "description": "Ray casts, shape casts and overlaps ask the physics world what is where, without moving anything.",
          "controls": "Push crates into the laser, carry the crate off the cart track, and watch the gate count what passes.",
+         "touchControls": "",
          "viewpoint": {
           "flags": 2,
           "uid": "8bf5cbaa-1492-cf4a-892a-04e62f506ce5"
@@ -119746,6 +119758,83 @@
         },
         "style_flags": 0
        }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "entities": [
+    {
+     "uid": "7bb61dec-4a63-a44d-8481-170cd2a9809b",
+     "components": {
+      "has_id_component": true,
+      "id_component": {
+       "id": "7bb61dec-4a63-a44d-8481-170cd2a9809b"
+      },
+      "has_tag_component": true,
+      "tag_component": {
+       "name": "Touch Controls",
+       "tag": ""
+      },
+      "has_layer_component": true,
+      "layer_component": {
+       "layers": {
+        "mask": 1
+       }
+      },
+      "has_transform_component": true,
+      "transform_component": {
+       "local_transform": {
+        "position": {
+         "x": 0.0,
+         "y": 0.0,
+         "z": 0.0
+        },
+        "rotation_euler": {
+         "x": 0.0,
+         "y": -0.0,
+         "z": 0.0
+        },
+        "scale": {
+         "x": 1.0,
+         "y": 1.0,
+         "z": 1.0
+        },
+        "skew": {
+         "x": 0.0,
+         "y": 0.0,
+         "z": 0.0
+        }
+       },
+       "parent": {
+        "uid": "nil"
+       },
+       "children": [],
+       "active": true
+      },
+      "has_script_component": true,
+      "script_component": {
+       "script_components": [
+        {
+         "type": "Unravel.Samples.SampleTouchJoystick",
+         "@slot": "ff91fdf2-6f8d-b145-bbbb-23890e508c5f",
+         "RightStick": false,
+         "Radius": 0.10999999940395355,
+         "DeadZone": 0.15000000596046449,
+         "Floating": true,
+         "AreaWidth": 0.4000000059604645,
+         "AreaHeight": 0.6499999761581421,
+         "SouthLabel": "Jump",
+         "EastLabel": "Push",
+         "WestLabel": "Use",
+         "NorthLabel": "Grab",
+         "CornerLabel": "",
+         "ButtonSize": 0.12999999523162843,
+         "Show": 0,
+         "TapsAreNotClicks": true
+        }
+       ]
       }
      }
     }

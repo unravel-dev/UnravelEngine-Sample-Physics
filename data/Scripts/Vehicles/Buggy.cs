@@ -6,9 +6,9 @@ namespace PhysicsSample
     /// A buggy on four wheel joints. Each wheel spins on its joint's motor, rides a spring suspension and the front
     /// two steer; nothing else holds the chassis up. The visitor gets in with E (or a click on it) and drives:
     /// <list type="bullet">
-    /// <item>W and S (the left stick) drive the motors forward and back, Space brakes.</item>
+    /// <item>W and S (the left stick) drive the motors forward and back, Space (the action "Jump") brakes.</item>
     /// <item>A and D steer the front wheels.</item>
-    /// <item>F puts the buggy back on its wheels, E gets out.</item>
+    /// <item>F (the action "Flip") puts the buggy back on its wheels, E ("Use") gets out.</item>
     /// </list>
     /// While it drives, the visitor's camera follows behind the chassis.
     /// </summary>
@@ -100,7 +100,7 @@ namespace PhysicsSample
                 Exit();
                 return;
             }
-            if (Input.IsPressed(KeyCode.F))
+            if (Input.IsPressed(KeyCode.F) || Input.IsPressed("Flip"))
             {
                 Upright();
             }

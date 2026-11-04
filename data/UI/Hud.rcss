@@ -88,7 +88,7 @@ body {
 	color: #ffffff;
 }
 
-#brand-sub {
+.brand-sub {
 	margin-top: 4dp;
 	font-size: 12dp;
 	color: #aab4c0;
@@ -197,12 +197,16 @@ body {
 
 /* ---------- menus, centre ---------- */
 
+/* Placed from the top rather than centred by a transform, so the layout reports where they are drawn; a menu
+   taller than the room there scrolls. */
 .modal {
 	left: 50%;
-	top: 50%;
+	top: 5vh;
 	width: 560dp;
 	margin-left: -280dp;
-	transform: translateY(-50%);
+	max-height: 90vh;
+	overflow-y: auto;
+	box-sizing: border-box;
 	padding: 18dp 22dp;
 	pointer-events: auto;
 	background-color: rgba(10, 14, 22, 230);
@@ -212,6 +216,7 @@ body {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	box-sizing: border-box;
 	padding: 8dp 10dp;
 	margin: 4dp 0;
 	border-radius: 8dp;
@@ -270,4 +275,258 @@ body {
 
 .close:hover {
 	background-color: #ffe39f;
+}
+
+/* An open menu has the screen to itself. */
+.menu-open #brand,
+.menu-open #station,
+.menu-open #gravity {
+	display: none;
+}
+
+/* ---------- touch screens ---------- */
+
+/* The on-screen stick and buttons hold the bottom corners, so the cards move to the top and buttons there open
+   the menus. Only what differs by input lives here: the sizes stay those of the screen. */
+
+#touch-bar {
+	position: absolute;
+	right: 20dp;
+	top: 20dp;
+	display: flex;
+	flex-direction: row;
+}
+
+.touch-button {
+	pointer-events: auto;
+	min-width: 76dp;
+	height: 44dp;
+	line-height: 44dp;
+	margin-left: 8dp;
+	padding: 0 14dp;
+	border-radius: 10dp;
+	text-align: center;
+	font-weight: 600;
+	font-size: 14dp;
+	color: #14171c;
+	background-color: #ffcf6b;
+}
+
+.touch-button:active {
+	background-color: #ffe39f;
+}
+
+.touch #station,
+.touch #driving {
+	top: 20dp;
+	bottom: auto;
+}
+
+.touch #brand.behind {
+	display: none;
+}
+
+/* On a touch screen the card folds to its title once read, and a tap opens it again. */
+.touch #station {
+	pointer-events: auto;
+}
+
+#station.folded #station-description,
+#station.folded #station-controls {
+	display: none;
+}
+
+#station-more {
+	margin-top: 2dp;
+	font-size: 11dp;
+	color: #aab4c0;
+}
+
+.touch #gravity {
+	top: 80dp;
+}
+
+/* ---------- a phone held sideways: under 500 dp tall ---------- */
+
+@media (max-height: 500dp) {
+	.panel {
+		padding: 8dp 12dp;
+		border-radius: 8dp;
+	}
+
+	#brand {
+		left: 10dp;
+		top: 10dp;
+		width: 300dp;
+	}
+
+	#brand-title {
+		font-size: 15dp;
+		letter-spacing: 1.5dp;
+	}
+
+	.brand-sub {
+		font-size: 11dp;
+	}
+
+	#gravity {
+		right: 10dp;
+		top: 10dp;
+		padding: 5dp 10dp;
+		font-size: 11dp;
+	}
+
+	.touch #gravity {
+		top: 62dp;
+	}
+
+	#touch-bar {
+		right: 10dp;
+		top: 10dp;
+	}
+
+	#station {
+		left: 10dp;
+		bottom: 10dp;
+		width: 46vw;
+	}
+
+	#driving {
+		left: 10dp;
+		bottom: 10dp;
+		width: 270dp;
+	}
+
+	.touch #station,
+	.touch #driving {
+		top: 10dp;
+		bottom: auto;
+	}
+
+	#station-title {
+		font-size: 15dp;
+	}
+
+	#station-description,
+	#station-controls {
+		margin-top: 4dp;
+		font-size: 12dp;
+	}
+
+	#driving .row {
+		margin: 3dp 0;
+		font-size: 12dp;
+	}
+
+	#hints {
+		right: 10dp;
+		bottom: 10dp;
+	}
+
+	#crosshair {
+		width: 300dp;
+		margin-left: -150dp;
+	}
+
+	#aim-text {
+		margin-top: 6dp;
+		font-size: 12dp;
+	}
+
+	.modal {
+		top: 3vh;
+		width: 90vw;
+		margin-left: -45vw;
+		max-height: 94vh;
+		padding: 10dp 14dp;
+	}
+
+	.caption {
+		margin-bottom: 4dp;
+	}
+
+	#help .row {
+		margin: 3dp 0;
+		font-size: 12dp;
+	}
+
+	/* Six stations in two columns of three, each a row a thumb can hit. */
+	.station-list {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+
+	.station-row {
+		width: 49.5%;
+		min-height: 44dp;
+		margin: 2dp 0;
+		padding: 4dp 8dp;
+	}
+
+	.station-summary {
+		display: none;
+	}
+
+	.menu-buttons {
+		margin-top: 4dp;
+	}
+
+	.close {
+		margin-top: 6dp;
+		padding: 0 16dp;
+		height: 40dp;
+		line-height: 40dp;
+	}
+}
+
+/* ---------- a phone held upright: under 600 dp wide ---------- */
+
+@media (max-width: 600dp) {
+	#brand,
+	#station,
+	#driving {
+		left: 3vw;
+		right: 3vw;
+		width: auto;
+	}
+
+	#gravity {
+		left: 3vw;
+		right: 3vw;
+		padding: 5dp 10dp;
+		font-size: 11dp;
+		text-align: center;
+	}
+
+	.touch #gravity {
+		top: 64dp;
+	}
+
+	.touch #brand,
+	.touch #station,
+	.touch #driving {
+		top: 104dp;
+		bottom: auto;
+	}
+
+	#brand {
+		top: 48dp;
+	}
+
+	#crosshair {
+		width: 90vw;
+		margin-left: -45vw;
+	}
+
+	.modal {
+		width: 94vw;
+		margin-left: -47vw;
+		padding: 14dp 16dp;
+	}
+
+	.station-row {
+		width: 100%;
+	}
 }
