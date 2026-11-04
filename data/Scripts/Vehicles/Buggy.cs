@@ -25,10 +25,10 @@ namespace PhysicsSample
         public float wheelRadius = 0.42f;
 
         [Tooltip("Top speed, meters per second.")]
-        public float topSpeed = 15.0f;
+        public float topSpeed = 12.0f;
 
         [Tooltip("Torque of each driving motor, newton meters.")]
-        public float driveTorque = 420.0f;
+        public float driveTorque = 200.0f;
 
         [Tooltip("Torque each motor holds a braked wheel with, newton meters.")]
         public float brakeTorque = 1400.0f;
@@ -64,6 +64,9 @@ namespace PhysicsSample
         /// <summary>Degrees per radian, to turn the motors' spin from radians into degrees per second.</summary>
         private const float DegreesPerRadian = 57.29578f;
 
+        /// <summary>How high Flip lifts the buggy before standing it on its wheels, meters.</summary>
+        private const float UprightLift = 1.2f;
+
         private FirstPersonController walker;
         private Hud display;
         private Entity eye;
@@ -73,6 +76,9 @@ namespace PhysicsSample
         private float steering;
         private float enteredTime;
         private bool isDriving;
+        private Entity[] wheelBodies = new Entity[0];
+        private Vector3[] wheelRestPositions = new Vector3[0];
+        private Quaternion[] wheelRestRotations = new Quaternion[0];
 
         /// <summary>Whether the visitor is driving.</summary>
         public bool driving => isDriving;
@@ -86,6 +92,7 @@ namespace PhysicsSample
             {
                 button.pressed += _ => Enter();
             }
+            RememberWheels();
             SetWheels(0.0f, false);
         }
 
@@ -188,15 +195,60 @@ namespace PhysicsSample
             owner.GetComponent<PhysicsComponent>()?.WakeUp();
         }
 
+        /// <summary>
+        /// Where each wheel sits on the chassis at the start. The wheels are bodies of their own on their joints, so
+        /// Flip moves them with the chassis: a chassis righted alone would leave them where they lay, and the joints
+        /// would wrench them back.
+        /// </summary>
+        private void RememberWheels()
+        {
+            var bodies = new System.Collections.Generic.List<Entity>();
+            AddWheelBodies(driveWheels, bodies);
+            AddWheelBodies(steerWheels, bodies);
+            Quaternion toChassis = Quaternion.Inverse(transform.rotation);
+            wheelBodies = bodies.ToArray();
+            wheelRestPositions = new Vector3[wheelBodies.Length];
+            wheelRestRotations = new Quaternion[wheelBodies.Length];
+            for (int i = 0; i < wheelBodies.Length; ++i)
+            {
+                wheelRestPositions[i] = toChassis * (wheelBodies[i].transform.position - transform.position);
+                wheelRestRotations[i] = toChassis * wheelBodies[i].transform.rotation;
+            }
+        }
+
+        private static void AddWheelBodies(Entity[] joints, System.Collections.Generic.List<Entity> bodies)
+        {
+            foreach (var wheel in joints)
+            {
+                var joint = wheel ? wheel.GetComponent<JointComponent>() : null;
+                if (joint != null && joint.bodyB && !bodies.Contains(joint.bodyB))
+                {
+                    bodies.Add(joint.bodyB);
+                }
+            }
+        }
+
+        /// <summary>Lifts the buggy and stands it on its wheels at rest, wheels and all.</summary>
         private void Upright()
         {
-            transform.position = transform.position + Vector3.up * 1.2f;
-            transform.rotation = Quaternion.Euler(0.0f, Heading.Of(owner), 0.0f);
-            var body = owner.GetComponent<PhysicsComponent>();
-            if (body != null)
+            Vector3 position = transform.position + Vector3.up * UprightLift;
+            Quaternion rotation = Quaternion.Euler(0.0f, Heading.Of(owner), 0.0f);
+            Place(owner, position, rotation);
+            for (int i = 0; i < wheelBodies.Length; ++i)
             {
-                body.velocity = Vector3.zero;
-                body.angularVelocity = Vector3.zero;
+                Place(wheelBodies[i], position + rotation * wheelRestPositions[i], rotation * wheelRestRotations[i]);
+            }
+        }
+
+        private static void Place(Entity body, Vector3 position, Quaternion rotation)
+        {
+            body.transform.position = position;
+            body.transform.rotation = rotation;
+            var physics = body.GetComponent<PhysicsComponent>();
+            if (physics != null)
+            {
+                physics.velocity = Vector3.zero;
+                physics.angularVelocity = Vector3.zero;
             }
         }
 

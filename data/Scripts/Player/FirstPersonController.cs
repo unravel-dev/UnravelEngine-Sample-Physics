@@ -54,6 +54,7 @@ namespace PhysicsSample
         private float yaw;
         private float pitch;
         private bool isDriving;
+        private float walkingGravityScale = 1.0f;
         private Vector2 lastPointer;
         private bool wasPointerHeld;
 
@@ -78,6 +79,7 @@ namespace PhysicsSample
         public override void OnStart()
         {
             controller = owner.GetComponent<CharacterControllerComponent>();
+            walkingGravityScale = controller.gravityScale;
             yaw = Heading.Of(owner);
             LockCursor(!Input.touchSupported);
         }
@@ -95,12 +97,15 @@ namespace PhysicsSample
 
         /// <summary>
         /// Hands control to something else (the buggy) or takes it back. While driving, the player neither walks nor
-        /// looks and its controller stays where it is.
+        /// looks and its controller stays where it is: without gravity, since the camera hangs under the player, and a
+        /// player falling away would carry it along and, kilometers down, cost its position the precision to move
+        /// smoothly.
         /// </summary>
         public void SetDriving(bool driving)
         {
             isDriving = driving;
             velocity = Vector3.zero;
+            controller.gravityScale = driving ? 0.0f : walkingGravityScale;
         }
 
         /// <summary>Puts the player at a point, facing a direction (station teleports, leaving the buggy).</summary>

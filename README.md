@@ -104,6 +104,12 @@ A buggy built from a chassis and four wheel joints: each wheel spins on a motor,
 limits, and the front two steer. Drive it over a kicker and a jump, into a crate wall, through cones and bowling
 pins. W and S drive, A and D steer, Space brakes, F puts it back on its wheels, E gets out.
 
+The wheels collide as spheres of the tire's radius, with the tires as their visuals: a cylinder collider is a
+many-sided prism that bumps over its faces, and would roll slowly and lose grip. Each motor's torque stays below
+what a tire can pass to the ground, so the tires grip instead of spinning and keep their grip for steering. The
+chassis and wheels interpolate between physics steps, and the chase camera follows in `OnLateUpdate`, so both move
+evenly at any frame rate.
+
 ### 6. Queries
 
 - A laser sweeps across three glass panes to a plate. The panes are sensors: `Physics.Raycast` passes them and stops
