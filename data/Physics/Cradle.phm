@@ -1,0 +1,11 @@
+{
+ "physics_material": {
+  "restitution": 1.0,
+  "friction": 0.0,
+  "stiffness": 0.5,
+  "damping": 0.10000000149011612,
+  "restitution_combine": 0,
+  "friction_combine": 0,
+  "rolling_resistance": 0.0
+ }
+}

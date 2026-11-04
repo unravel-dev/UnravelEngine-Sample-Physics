@@ -1,0 +1,20 @@
+{
+ "meta": {
+  "type": ".wav",
+  "uid": "951a2a57-82de-a24a-abf2-6e98009c8a3b",
+  "importer": {
+   "polymorphic_id": 2147483649,
+   "polymorphic_name": "audio_importer_meta",
+   "ptr_wrapper": {
+    "id": 2147483649,
+    "data": {
+     "base_type": {},
+     "force_to_mono": false
+    }
+   }
+  },
+  "header": {
+   "polymorphic_id": 0
+  }
+ }
+}

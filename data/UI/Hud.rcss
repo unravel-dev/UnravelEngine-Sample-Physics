@@ -1,0 +1,273 @@
+@font-face {
+	font-family: Playground;
+	font-weight: 400;
+	src: "engine:/data/fonts/Inter/static/Inter-Regular.ttf";
+}
+
+@font-face {
+	font-family: Playground;
+	font-weight: 600;
+	src: "engine:/data/fonts/Inter/static/Inter-SemiBold.ttf";
+}
+
+@font-face {
+	font-family: Playground;
+	font-weight: 800;
+	src: "engine:/data/fonts/Inter/static/Inter-ExtraBold.ttf";
+}
+
+html, body {
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+/* The HUD only shows; the menus take the mouse while they are open. */
+body {
+	font-family: Playground;
+	font-weight: 400;
+	font-size: 14dp;
+	color: #e9eef3;
+	background-color: rgba(0, 0, 0, 0);
+	pointer-events: none;
+}
+
+.panel {
+	position: absolute;
+	padding: 12dp 16dp;
+	border-radius: 10dp;
+	background-color: rgba(10, 14, 22, 190);
+	border: 1dp rgba(255, 176, 64, 60);
+}
+
+.caption {
+	font-weight: 800;
+	font-size: 11dp;
+	letter-spacing: 1.5dp;
+	color: #ffb040;
+	margin-bottom: 8dp;
+}
+
+.key {
+	display: inline-block;
+	font-weight: 600;
+	font-size: 11dp;
+	color: #14171c;
+	background-color: #ffcf6b;
+	border-radius: 4dp;
+	padding: 1dp 6dp;
+	margin-right: 8dp;
+}
+
+.key.inline {
+	margin-left: 4dp;
+}
+
+.key.gap {
+	margin-left: 14dp;
+}
+
+.row {
+	display: block;
+	margin: 5dp 0;
+}
+
+/* ---------- brand, top left ---------- */
+
+#brand {
+	left: 20dp;
+	top: 20dp;
+	width: 360dp;
+}
+
+#brand-title {
+	font-weight: 800;
+	font-size: 20dp;
+	letter-spacing: 2dp;
+	color: #ffffff;
+}
+
+#brand-sub {
+	margin-top: 4dp;
+	font-size: 12dp;
+	color: #aab4c0;
+}
+
+/* ---------- gravity, top right ---------- */
+
+#gravity {
+	right: 20dp;
+	top: 20dp;
+	font-weight: 600;
+	font-size: 13dp;
+	color: #c9b8ff;
+	border-color: rgba(160, 120, 255, 90);
+}
+
+/* ---------- crosshair, centre ---------- */
+
+#crosshair {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 360dp;
+	margin-left: -180dp;
+	margin-top: -6dp;
+	text-align: center;
+}
+
+#crosshair-dot {
+	display: block;
+	width: 12dp;
+	height: 12dp;
+	margin: 0 auto;
+	border-radius: 6dp;
+	border: 2dp rgba(255, 255, 255, 150);
+	background-color: rgba(255, 255, 255, 40);
+}
+
+#crosshair.aim-body #crosshair-dot { border-color: #ffffff; background-color: rgba(255, 255, 255, 110); }
+#crosshair.aim-heavy #crosshair-dot { border-color: #ff5a4a; }
+#crosshair.aim-ragdoll #crosshair-dot { border-color: #ffb040; background-color: rgba(255, 176, 64, 120); }
+#crosshair.aim-use #crosshair-dot { border-color: #6cf08c; background-color: rgba(108, 240, 140, 140); }
+#crosshair.aim-carry #crosshair-dot { border-color: #6cc8ff; background-color: rgba(108, 200, 255, 140); }
+
+#aim-text {
+	display: block;
+	margin-top: 10dp;
+	font-weight: 600;
+	font-size: 13dp;
+	color: #ffffff;
+	font-effect: outline(1dp #000000c0);
+}
+
+/* ---------- station card, bottom left ---------- */
+
+#station {
+	left: 20dp;
+	bottom: 20dp;
+	width: 440dp;
+}
+
+#station-title {
+	font-weight: 800;
+	font-size: 18dp;
+	color: #ffb040;
+}
+
+#station-description {
+	margin-top: 6dp;
+	color: #dbe2ea;
+}
+
+#station-controls {
+	margin-top: 8dp;
+	font-size: 13dp;
+	color: #9fe3b2;
+}
+
+#station-reset {
+	margin-top: 10dp;
+	font-size: 12dp;
+	color: #aab4c0;
+}
+
+/* ---------- driving card, bottom left ---------- */
+
+#driving {
+	left: 20dp;
+	bottom: 20dp;
+	width: 300dp;
+}
+
+/* ---------- key hints, bottom right ---------- */
+
+#hints {
+	right: 20dp;
+	bottom: 20dp;
+	font-size: 12dp;
+	color: #c3ccd6;
+}
+
+.hint {
+	margin-left: 14dp;
+	color: #ffcf6b;
+}
+
+/* ---------- menus, centre ---------- */
+
+.modal {
+	left: 50%;
+	top: 50%;
+	width: 560dp;
+	margin-left: -280dp;
+	transform: translateY(-50%);
+	padding: 18dp 22dp;
+	pointer-events: auto;
+	background-color: rgba(10, 14, 22, 230);
+}
+
+.station-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 8dp 10dp;
+	margin: 4dp 0;
+	border-radius: 8dp;
+	background-color: rgba(255, 255, 255, 10);
+	cursor: pointer;
+}
+
+.station-row:hover {
+	background-color: rgba(255, 176, 64, 50);
+}
+
+.station-row.current {
+	border: 1dp #ffb040;
+}
+
+.station-number {
+	width: 30dp;
+	font-weight: 800;
+	font-size: 18dp;
+	color: #ffb040;
+}
+
+.station-text {
+	flex: 1;
+}
+
+.station-name {
+	font-weight: 600;
+	font-size: 15dp;
+	color: #ffffff;
+}
+
+.station-summary {
+	font-size: 12dp;
+	color: #aab4c0;
+}
+
+.menu-buttons {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	margin-top: 12dp;
+}
+
+.close {
+	display: inline-block;
+	margin-top: 12dp;
+	margin-left: 10dp;
+	padding: 6dp 14dp;
+	border-radius: 6dp;
+	font-weight: 600;
+	color: #14171c;
+	background-color: #ffcf6b;
+	cursor: pointer;
+}
+
+.close:hover {
+	background-color: #ffe39f;
+}
