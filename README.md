@@ -1,54 +1,39 @@
-# UnravelEngine Sample: Physics Playground
+# Physics Playground
 
-![A barrel blast throws crates and a mannequin](docs/screenshot.jpg)
+![Physics Playground](thumbnail.jpg)
 
-A walkable playground of six stations around a central plaza, made with
-[UnravelEngine](https://github.com/unravel-dev/UnravelEngine). Each station shows a group of the engine's physics
+A walkable playground of six stations around a central plaza. Each station shows a group of the engine's physics
 features and lets you try them with a physics tool: push bodies, carry and throw them, press buttons, drive a
-buggy, and knock mannequins over.
+buggy and knock mannequins over. A sample project for [Unravel Engine](https://github.com/unravel-dev/UnravelEngine).
 
-Open the project in the Unravel editor and press Play. The scene is `data/Scenes/Playground.spfb`, which is also
-the startup scene of a deployed build.
+## Play
 
-## Controls
+Clone this repository, or get it from the Samples page of the Unravel editor's start page, and open its folder in
+the editor. Open `data/Scenes/Playground.spfb` and press Play; it is also the startup scene of a deployed build.
 
-| Input | What it does |
-|-------|--------------|
-| W A S D, left stick | Walk; Shift (right trigger) runs, Space jumps |
-| Mouse, right stick | Look around |
-| Left click | Push what the crosshair is on, or press a button |
-| Right click (hold) | Carry a body; left click throws it, the mouse wheel moves it nearer or further |
-| E | Press the button or barrel in front of you, get in or out of the buggy |
-| R | Put the station you are at back as it started |
-| 1 - 6, Tab | Go to a station, or open the station menu |
-| F1 | Show the controls |
-| Esc | Free the cursor to click the menus; click the view to look around again |
+| Action | Keyboard and mouse | Gamepad | Touch |
+|---|---|---|---|
+| Walk, run | W A S D, Shift runs | Left stick, right trigger runs | Stick on the left side, pushed all the way to run |
+| Look around | Mouse | Right stick | Drag anywhere else |
+| Jump | Space | A | Jump |
+| Push a body or press a button | Left click | B | Push |
+| Carry a body, throw it | Hold right click; left click throws, the wheel moves it nearer or further | Y grabs and puts down, B throws | Grab, then Throw or Drop |
+| Use a button or barrel, get in or out of the buggy | E | X | Use |
+| Put the station back as it started | R | - | Reset |
+| Go to a station | 1 - 6, Tab opens the station menu | - | Stations |
+| Show the controls | F1 | - | Help |
+| Free the cursor for the menus | Esc, click the view to look again | - | - |
 
-The crosshair tells what a click would do: the mass of a body, "too heavy to carry", a button's action.
+In the buggy, W and S drive, A and D steer, Space brakes, F puts it back on its wheels and E gets out; on a touch
+screen the stick drives and the buttons read Brake, Exit and Flip. The crosshair tells what a click would do: the
+mass of a body, "too heavy to carry", a button's action.
 
-A gamepad plays too: the left stick walks, the right stick looks, the right trigger runs, A jumps, B pushes (and
-throws what you carry), Y grabs and puts down, X uses.
+A touch screen gets the engine's on-screen controls (`SampleTouchJoystick`). The station card moves to the top, out
+of the controls' way, folds to its title after a few seconds and opens again on a tap. The layout is in `dp` with
+media queries for a phone held sideways or upright, so the Game panel's phone and tablet presets show what a device
+shows.
 
-### On a phone or tablet
-
-A touch screen gets the engine's on-screen controls (`SampleTouchJoystick`), and the HUD answers to it:
-
-| Touch | What it does |
-|-------|--------------|
-| Stick, left side | Walk where your left thumb lands; push it all the way to run |
-| Drag anywhere else | Look around |
-| Push | Push what the crosshair is on, or press a button; while carrying it reads Throw |
-| Grab | Pick up what the crosshair is on; while carrying it reads Drop and puts the body down |
-| Use | Press the button or barrel in front of you, get in the buggy |
-| Jump | Jump |
-| Stations, Help, Reset | Open the station menu or the controls, put the station back |
-
-The buttons say what they do at the moment: in the buggy they read Brake, Exit and Flip, and the stick drives
-and steers. The station card moves to the top, out of the controls' way, folds to its title after a few seconds
-and opens again on a tap. The layout is in `dp` with media queries for a phone held sideways or upright, so the
-Game panel's phone and tablet presets show what a device shows.
-
-## The stations
+## What it shows
 
 ### 1. Ragdoll Lab
 
@@ -102,7 +87,7 @@ And:
 
 A buggy built from a chassis and four wheel joints: each wheel spins on a motor, rides a spring suspension inside its
 limits, and the front two steer. Drive it over a kicker and a jump, into a crate wall, through cones and bowling
-pins. W and S drive, A and D steer, Space brakes, F puts it back on its wheels, E gets out.
+pins.
 
 The wheels collide as spheres of the tire's radius, with the tires as their visuals: a cylinder collider is a
 many-sided prism that bumps over its faces, and would roll slowly and lose grip. Each motor's torque stays below
@@ -118,21 +103,29 @@ evenly at any frame rate.
   bodies pass and what they weigh.
 - A cart sweeps its box ahead with `Physics.BoxCastAll` and waits while anything is on its track.
 
-## Scripts
+## Screenshots
 
-All scripts are in `data/Scripts` (namespace `PhysicsSample`):
+| | |
+|---|---|
+| ![A barrel blast throws the crates and the mannequin](docs/screenshots/01-barrel-blast.jpg) | ![A stunt mannequin tumbles down the stairs as a ragdoll](docs/screenshots/02-ragdoll-stairs.jpg) |
+| ![The wrecking ball smashes the crate wall, Newton's cradle beside it](docs/screenshots/03-wrecking-ball.jpg) | ![Dominoes falling along their S curve](docs/screenshots/04-dominoes.jpg) |
+| ![The buggy leaves the kicker, headed for the crate wall](docs/screenshots/05-buggy-jump.jpg) | |
 
-| Folder | Scripts |
-|--------|---------|
-| Core | `Hud` (the HUD's data model), `Station` (station text, menu, reset), `StationPart`, `Interactable`, `SlideGate`, `Nudge`, `ImpactSound`, `Heading` |
-| Player | `FirstPersonController`, `PhysicsTool` |
-| Ragdolls | `RagdollCharacter`, `RagdollLauncher` |
-| Joints | `MotorSwitch`, `JointBreakSound` |
-| Forces | `ForceField`, `Buoyant`, `ExplosiveBarrel`, `GravitySwitch` |
-| Vehicles | `Buggy` |
-| Queries | `LaserScanner`, `ScannerGate`, `SweepCart` |
+## Project layout
 
-The HUD is `data/UI/Hud.rhtml` and `Hud.rcss`.
+| Path | What it holds |
+|---|---|
+| `data/Scenes/Playground.spfb` | The playground: plaza, six stations, player, buggy and HUD. |
+| `data/Scripts/Core` | `Hud` (the HUD's data model), `Station` (station text, menu, reset), `StationPart`, `Interactable`, `SlideGate`, `Nudge`, `ImpactSound`, `Heading` |
+| `data/Scripts/Player` | `FirstPersonController`, `PhysicsTool` |
+| `data/Scripts/Ragdolls` | `RagdollCharacter`, `RagdollLauncher` |
+| `data/Scripts/Joints` | `MotorSwitch`, `JointBreakSound` |
+| `data/Scripts/Forces` | `ForceField`, `Buoyant`, `ExplosiveBarrel`, `GravitySwitch` |
+| `data/Scripts/Vehicles` | `Buggy` |
+| `data/Scripts/Queries` | `LaserScanner`, `ScannerGate`, `SweepCart` |
+| `data/UI/Hud.rhtml`, `Hud.rcss` | The HUD: crosshair, station card, menu, controls and touch buttons. |
+
+The scripts are in the namespace `PhysicsSample`.
 
 ## How it was built
 
@@ -141,11 +134,20 @@ components, joints and ragdolls, and the render and physics materials, then play
 check that each exhibit behaves. The ragdolls were made by Ragdoll Auto Setup and tuned from the bodies' poses the
 MCP `physics_world` tool reports.
 
-The textures, particle sprites and sounds were generated for the sample.
+## Platforms
+
+| Profile | Notes |
+|---|---|
+| Desktop | Windows or Linux, as the editor runs on. |
+| Android | Phones and tablets, with the on-screen controls. |
+
+Deploy from the editor's Deploy window with a profile from `profiles/`.
 
 ## Credits
 
-- Mannequins and animations: Universal Animation Library and Universal Animation Library 2 by Quaternius,
-  https://quaternius.com, CC0 1.0.
-- Everything else in the project was made for it. Code and all other content are under the MIT license in
-  `LICENSE`.
+| Asset | Author | License |
+|---|---|---|
+| Mannequins and animations: Universal Animation Library and Universal Animation Library 2 | Quaternius, https://quaternius.com | CC0 1.0 |
+
+The textures, particle sprites and sounds were generated for this sample. Code and all other content are under the
+MIT license in [LICENSE](LICENSE).
