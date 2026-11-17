@@ -72,6 +72,10 @@ namespace PhysicsSample
         [Tooltip("Seconds that strength takes to fade to a limp body.")]
         public float fallLimpSeconds = 0.8f;
 
+        [Tooltip("Head-over-heels turn a launch adds, in radians per second per meter per second of launch speed: a " +
+                 "catapult throws the body tumbling, a nudge off a ledge barely turns it.")]
+        public float launchSpinPerSpeed = 0.4f;
+
         [Tooltip("Seconds lying still before getting up.")]
         public float restBeforeGetUp = 1.2f;
 
@@ -172,22 +176,27 @@ namespace PhysicsSample
                 return;
             }
             StopAllCoroutines();
-            BeginFall();
+            BeginFall(fallStiffness);
         }
 
-        private void BeginFall()
+        /// <summary>
+        /// Every body simulates, keeping <paramref name="stiffness"/> of the joint drives' strength, which fades to a
+        /// limp body.
+        /// </summary>
+        private void BeginFall(float stiffness)
         {
             staggeredBone = null;
             damage = 0.0f;
             mood = Mood.Down;
             ragdoll.Power();
-            ragdoll.driveStrength = fallStiffness;
+            ragdoll.driveStrength = stiffness;
             StartCoroutine(LieDown());
         }
 
         /// <summary>
-        /// Stands the mannequin at a point, facing a yaw in degrees, and after <paramref name="windUp"/> seconds knocks
-        /// it down with every body moving at <paramref name="velocity"/>: a push off a ledge, a catapult shot.
+        /// Stands the mannequin at a point, facing a yaw in degrees, and after <paramref name="windUp"/> seconds sends
+        /// it off limp with every body moving at <paramref name="velocity"/>, turning head over heels by
+        /// <see cref="launchSpinPerSpeed"/>: a push off a ledge, a catapult shot.
         /// </summary>
         public void Launch(Vector3 position, float yaw, Vector3 velocity, float windUp)
         {
@@ -204,8 +213,16 @@ namespace PhysicsSample
             ragdoll.ResetToAnimation();
             StartMood(Mood.Standing, 0.0f);
             yield return new WaitForSeconds(windUp);
-            BeginFall();
+            BeginFall(0.0f);
             ragdoll.AddVelocity(velocity);
+            // Gravity pulls every body alike, so a body thrown as one keeps its pose through the flight: the throw
+            // turns it head over heels as well.
+            int hips = ragdoll.FindBody("pelvis");
+            if (hips >= 0)
+            {
+                Vector3 spin = transform.right * (launchSpinPerSpeed * velocity.magnitude);
+                ragdoll.AddAngularVelocity(spin, ragdoll.GetBodyPosition(hips));
+            }
         }
 
         private void HitBody(int body, Vector3 point, Vector3 impulse)
